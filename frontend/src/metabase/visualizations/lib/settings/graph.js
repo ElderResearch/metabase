@@ -171,6 +171,99 @@ export const GRAPH_DATA_SETTINGS = {
   ...seriesSetting(),
 };
 
+export const LINKGRAPH_DATA_SETTINGS = {
+  ...columnSettings({
+    getColumns: (
+      [  {  data: { cols },},
+      ],
+      settings,
+    ) => cols,
+    hidden: true,
+  }),
+  "graph._dimension_filter": {
+    getDefault: ([{ card }]) =>
+      card.display === "scatter" ? isAny : isDimension,
+    useRawSeries: true,
+  },
+  "graph._metric_filter": {
+    getDefault: ([{ card }]) =>
+      card.display === "scatter" ? isAny : isDimension,
+    useRawSeries: true,
+  },
+  "graph.dimensions": {
+    section: t`Data`,
+    title: t`Node`,
+    widget: "fields",
+    isValid: ([{ card, data }], vizSettings) =>
+      columnsAreValid(
+        card.visualization_settings["graph.dimensions"],
+        data,
+        vizSettings["graph._dimension_filter"],
+      ) &&
+      columnsAreValid(
+        card.visualization_settings["graph.metrics"],
+        data,
+        vizSettings["graph._metric_filter"],
+      ),
+    getDefault: (series, vizSettings) => getDefaultColumns(series).dimensions,
+    persistDefault: true,
+    getProps: ([{ card, data }], vizSettings) => {
+      const value = vizSettings["graph.dimensions"];
+      const options = data.cols
+        .filter(vizSettings["graph._dimension_filter"])
+        .map(getOptionFromColumn);
+      return {
+        options,
+        columns: data.cols,
+        showColumnSetting: true,
+      };
+    },
+    readDependencies: ["graph._dimension_filter", "graph._metric_filter"],
+    writeDependencies: ["graph.metrics"],
+    dashboard: false,
+    useRawSeries: true,
+  },
+  "graph.metrics": {
+    section: t`Data`,
+    title: t`Node`,
+    widget: "fields",
+    isValid: ([{ card, data }], vizSettings) =>
+      columnsAreValid(
+        card.visualization_settings["graph.dimensions"],
+        data,
+        vizSettings["graph._dimension_filter"],
+      ) &&
+      columnsAreValid(
+        card.visualization_settings["graph.metrics"],
+        data,
+        vizSettings["graph._metric_filter"],
+      ),
+    getDefault: (series, vizSettings) => getDefaultColumns(series).metrics,
+    persistDefault: true,
+    getProps: ([{ card, data }], vizSettings) => {
+      const value = vizSettings["graph.dimensions"];
+      const options = data.cols
+        .filter(vizSettings["graph._metric_filter"])
+        .map(getOptionFromColumn);
+      return {
+        options,
+        addAnother:
+          options.length > value.length &&
+          vizSettings["graph.dimensions"].length < 2
+            ? t`Add another series...`
+            : null,
+        columns: data.cols,
+        showColumnSetting: true,
+      };
+    },
+    readDependencies: ["graph._dimension_filter", "graph._metric_filter"],
+    writeDependencies: ["graph.dimensions"],
+    dashboard: false,
+    useRawSeries: true,
+  },
+  ...seriesSetting(),
+};
+
 export const GRAPH_BUBBLE_SETTINGS = {
   "scatter.bubble": {
     section: t`Data`,
