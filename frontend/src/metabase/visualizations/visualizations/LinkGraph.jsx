@@ -95,7 +95,9 @@ export default class LinkGraph extends LinkGraphRenderer {
       }
       let colorpicker = ["green", "blue", "red", "yellow", "orange", "purple"]
       //hardcoded filter of whats to be selected
-      let selectedProgram = "HOUSING COUNSELING ASSISTANCE PROGRAM";
+      //should replace with what filter is but isnt connected yet
+      //let selectedProgram = "HOUSING COUNSELING ASSISTANCE PROGRAM";
+      let selectedProgram = true;
       let nodeArray = [];
       let linkArray = [];
       //helps make all the nessisary nodes and connections
